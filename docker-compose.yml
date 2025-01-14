@@ -3,7 +3,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: bogerserge/shakethefrog:latest
     ports:
+      # HOST_PORT:CONTAINER_PORT - Maps port 3000 on the host to port 3000 in the container
       - "3000:3000"
     restart: unless-stopped
     healthcheck:
