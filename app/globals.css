@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Light mode styles */
+body {
+  background-color: rgb(240, 253, 244);
+  color: rgb(15, 23, 42);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode styles */
+:is(.dark body) {
+  background-color: rgb(15, 23, 42);
+  color: rgb(248, 250, 252);
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px) rotate(-5deg); }
+  75% { transform: translateX(5px) rotate(5deg); }
+}
+
+.animate-shake {
+  animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both 4;
+}
+
+@keyframes float-heart {
+  to {
+    transform: translate(
+      calc(var(--start-x) + (50vw * cos(var(--angle)))),
+      calc(var(--start-y) + (50vh * sin(var(--angle))))
+    ) scale(var(--scale));
+    opacity: 0;
+  }
+}
+
+.animate-float-heart {
+  animation: float-heart calc(2s * var(--speed)) ease-out forwards;
+}
+
+@keyframes fade-out {
+  to { opacity: 0; }
+}
+
+.animate-fade-out {
+  animation: fade-out 2s ease-out forwards;
+}
