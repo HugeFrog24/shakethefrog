@@ -10,7 +10,7 @@ interface SpeechBubbleProps {
   triggerCount: number;
 }
 
-export function SpeechBubble({ isShaken, triggerCount }: SpeechBubbleProps) {
+export function SpeechBubble({ triggerCount }: SpeechBubbleProps) {
   const [message, setMessage] = useState('');
   const [isVisible, setIsVisible] = useState(false);
   const [messageQueue, setMessageQueue] = useState<string[]>([]);
