@@ -13,65 +13,76 @@ interface SpeechBubbleProps {
 export function SpeechBubble({ isShaken, triggerCount }: SpeechBubbleProps) {
   const [message, setMessage] = useState('');
   const [isVisible, setIsVisible] = useState(false);
+  const [messageQueue, setMessageQueue] = useState<string[]>([]);
   const lastTriggerTime = useRef(0);
   const showTimeRef = useRef<number>(0);
+  const lastFadeTime = useRef(0);
+  
   const getRandomMessage = useCallback(() => {
     const randomIndex = Math.floor(Math.random() * frogMessages.length);
     return frogMessages[randomIndex];
   }, []);
 
-  // Handle showing new messages
+  // Handle new trigger events
   useEffect(() => {
-    if (triggerCount === 0) return; // Skip initial mount
+    if (triggerCount === 0) return;
     
     const now = Date.now();
-    const timeSinceLastMessage = now - lastTriggerTime.current;
+    const timeSinceLastFade = now - lastFadeTime.current;
 
-    // Show new message if cooldown has expired
-    if (timeSinceLastMessage >= COOLDOWN_MS) {
+    // If we're in cooldown, or a message is visible, queue the new message
+    if (timeSinceLastFade < COOLDOWN_MS || isVisible) {
+      const newMessage = getRandomMessage();
+      setMessageQueue(prev => [...prev, newMessage]);
+      return;
+    }
+
+    // Otherwise, show the message immediately
+    lastTriggerTime.current = now;
+    showTimeRef.current = now;
+    const newMessage = getRandomMessage();
+    setMessage(newMessage);
+    setIsVisible(true);
+  }, [triggerCount, getRandomMessage, isVisible]);
+
+  // Handle message queue
+  useEffect(() => {
+    if (messageQueue.length === 0 || isVisible) return;
+
+    const now = Date.now();
+    const timeSinceLastFade = now - lastFadeTime.current;
+
+    // Only show next message if cooldown has expired
+    if (timeSinceLastFade >= COOLDOWN_MS) {
+      const nextMessage = messageQueue[0];
+      setMessageQueue(prev => prev.slice(1)); // Remove the message from queue
       lastTriggerTime.current = now;
       showTimeRef.current = now;
-      const newMessage = getRandomMessage();
-      setMessage(newMessage);
+      setMessage(nextMessage);
       setIsVisible(true);
     }
-  }, [triggerCount, getRandomMessage]);
+  }, [messageQueue, isVisible]);
 
   // Handle visibility duration
   useEffect(() => {
     if (!isVisible) return;
 
-    const checkVisibility = setInterval(() => {
-      const now = Date.now();
-      const timeVisible = now - showTimeRef.current;
-      
-      if (timeVisible >= VISIBILITY_MS) {
-        setIsVisible(false);
-      }
-    }, 100); // Check every 100ms
+    const hideTimer = setTimeout(() => {
+      setIsVisible(false);
+      lastFadeTime.current = Date.now();
+    }, VISIBILITY_MS);
 
-    return () => {
-      clearInterval(checkVisibility);
-    };
+    return () => clearTimeout(hideTimer);
   }, [isVisible]);
-  
-  // Uncomment and modify the useEffect to control visibility based on isShaken prop
-  // This will make the speech bubble stay visible even after shaking stops
-  useEffect(() => {
-    if (!isShaken) {
-      // Don't hide the speech bubble when shaking stops
-      // The visibility duration timer will handle hiding it
-      return;
-    }
-  }, [isShaken]);
-
-  if (!isVisible) return null;
 
   return (
-    <div className="absolute -top-24 left-1/2 -translate-x-1/2 bg-white dark:bg-slate-800 px-4 py-2 rounded-xl shadow-lg animate-float z-20">
+    <div 
+      className={`absolute -top-24 left-1/2 -translate-x-1/2 bg-white dark:bg-slate-800 
+                  px-4 py-2 rounded-xl shadow-lg z-20 transition-opacity duration-300
+                  ${isVisible ? 'opacity-100 animate-float' : 'opacity-0 pointer-events-none'}`}
+    >
       <div className="relative">
         {message}
-        {/* Triangle pointer */}
         <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-0 h-0 
                       border-l-[8px] border-l-transparent
                       border-r-[8px] border-r-transparent
