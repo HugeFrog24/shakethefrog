@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { ThemeProvider } from './providers/ThemeProvider'
-import { ThemeToggle } from './components/ThemeToggle'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -23,7 +22,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} transition-colors`}>
         <ThemeProvider>
-          <ThemeToggle />
           {children}
         </ThemeProvider>
       </body>
