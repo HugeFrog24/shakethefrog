@@ -7,6 +7,8 @@ import { FloatingHearts } from './components/FloatingHearts';
 import { ThemeToggle } from './components/ThemeToggle';
 import { SpeechBubble } from './components/SpeechBubble';
 import { shakeConfig } from './config/shake';
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
+import { appConfig } from './config/app';
 
 export default function Home() {
   const [isShaken, setIsShaken] = useState(false);
@@ -15,8 +17,8 @@ export default function Home() {
   const [shakeCount, setShakeCount] = useState(0);
   const [motionPermission, setMotionPermission] = useState<PermissionState>('prompt');
   const isMobile = useIsMobile();
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [shakeQueue, setShakeQueue] = useState<number[]>([]);
+  const [, setIsAnimating] = useState(false);
+  const [, setShakeQueue] = useState<number[]>([]);
   const isAnimatingRef = useRef<boolean>(false);
   const animationTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const animationStartTimeRef = useRef<number>(0);
@@ -162,27 +164,28 @@ export default function Home() {
   return (
     <main className="flex h-[100dvh] flex-col items-center justify-between p-4 bg-green-50 dark:bg-slate-900 relative">
       <ThemeToggle />
-      <div className="flex-1 flex flex-col items-center justify-center w-full relative">
+      <div className="flex-1 flex flex-col items-center justify-center w-full">
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <FloatingHearts intensity={shakeIntensity} />
         </div>
-        <div 
-          className="relative z-10"
+        
+        <button 
           onClick={handleClick}
+          className="relative z-10"
+          aria-label="Shake the frog"
         >
           <FloatingHearts intensity={shakeIntensity} />
-          <div className="relative">
-            <SpeechBubble isShaken={isShaken} triggerCount={shakeCount} />
-            <Image
-              src={isShaken ? '/images/frog-shaken.svg' : '/images/frog.svg'}
-              alt="Frog"
-              width={200}
-              height={200}
-              priority
-              className={isShaken ? 'animate-shake' : ''}
-            />
-          </div>
-        </div>
+          <SpeechBubble isShaken={isShaken} triggerCount={shakeCount} />
+          <Image
+            src={isShaken ? '/images/frog-shaken.svg' : '/images/frog.svg'}
+            alt="Frog"
+            width={200}
+            height={200}
+            priority
+            className={isShaken ? 'animate-shake' : ''}
+          />
+        </button>
+
         <div className="mt-8 flex flex-col items-center gap-2">
           <p className="text-gray-600 dark:text-gray-400 text-center max-w-[240px]">
             {motionPermission === 'prompt' ? (
@@ -200,15 +203,17 @@ export default function Home() {
           </p>
         </div>
       </div>
+      
       <footer className="w-full text-center text-xs text-gray-400 dark:text-gray-600 mt-auto pt-4">
         © {new Date().getFullYear()}{' '}
         <a 
           href="https://github.com/HugeFrog24/shakethefrog"
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
+          className="hover:text-gray-600 dark:hover:text-gray-400 transition-colors inline-flex items-center gap-1"
         >
-          shakethefrog
+          {appConfig.name}
+          <ArrowTopRightOnSquareIcon className="w-3 h-3" />
         </a>
       </footer>
     </main>
