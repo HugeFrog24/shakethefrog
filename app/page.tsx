@@ -9,6 +9,8 @@ import { SpeechBubble } from './components/SpeechBubble';
 import { shakeConfig } from './config/shake';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
 import { appConfig } from './config/app';
+import { useLanguage } from './hooks/useLanguage';
+import { LanguageToggle } from './components/LanguageToggle';
 
 export default function Home() {
   const [isShaken, setIsShaken] = useState(false);
@@ -22,6 +24,7 @@ export default function Home() {
   const isAnimatingRef = useRef<boolean>(false);
   const animationTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const animationStartTimeRef = useRef<number>(0);
+  const language = useLanguage();
 
   // Check if device motion is available and handle permissions
   const requestMotionPermission = async () => {
@@ -163,7 +166,10 @@ export default function Home() {
 
   return (
     <main className="flex h-[100dvh] flex-col items-center justify-between p-4 bg-green-50 dark:bg-slate-900 relative">
-      <ThemeToggle />
+      <div className="w-full flex justify-between items-center">
+        <LanguageToggle />
+        <ThemeToggle />
+      </div>
       <div className="flex-1 flex flex-col items-center justify-center w-full">
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <FloatingHearts intensity={shakeIntensity} />
@@ -175,7 +181,11 @@ export default function Home() {
           aria-label="Shake the frog"
         >
           <FloatingHearts intensity={shakeIntensity} />
-          <SpeechBubble isShaken={isShaken} triggerCount={shakeCount} />
+          <SpeechBubble 
+            isShaken={isShaken} 
+            triggerCount={shakeCount} 
+            language={language} 
+          />
           <Image
             src={isShaken ? '/images/frog-shaken.svg' : '/images/frog.svg'}
             alt="Frog"

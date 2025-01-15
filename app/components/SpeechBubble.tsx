@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { frogMessages } from '../config/messages';
+import { frogMessages, SupportedLanguage } from '../config/messages';
 
 // Increase visibility duration for speech bubbles
 const VISIBILITY_MS = 3000; // 3 seconds for message visibility
@@ -8,9 +8,10 @@ const COOLDOWN_MS = 2000;   // 2 seconds between new messages
 interface SpeechBubbleProps {
   isShaken: boolean;
   triggerCount: number;
+  language: SupportedLanguage;
 }
 
-export function SpeechBubble({ triggerCount }: SpeechBubbleProps) {
+export function SpeechBubble({ triggerCount, language }: SpeechBubbleProps) {
   const [message, setMessage] = useState('');
   const [isVisible, setIsVisible] = useState(false);
   const [messageQueue, setMessageQueue] = useState<string[]>([]);
@@ -19,9 +20,10 @@ export function SpeechBubble({ triggerCount }: SpeechBubbleProps) {
   const lastFadeTime = useRef(0);
   
   const getRandomMessage = useCallback(() => {
-    const randomIndex = Math.floor(Math.random() * frogMessages.length);
-    return frogMessages[randomIndex];
-  }, []);
+    const messages = frogMessages[language];
+    const randomIndex = Math.floor(Math.random() * messages.length);
+    return messages[randomIndex];
+  }, [language]);
 
   // Handle new trigger events
   useEffect(() => {
