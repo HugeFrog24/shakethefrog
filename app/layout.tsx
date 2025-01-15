@@ -7,6 +7,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(appConfig.url),
   title: appConfig.name,
   description: appConfig.description,
   icons: {

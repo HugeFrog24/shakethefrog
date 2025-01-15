@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useIsMobile } from './hooks/useIsMobile';
 import Image from 'next/image';
 import { FloatingHearts } from './components/FloatingHearts';
@@ -15,6 +15,11 @@ export default function Home() {
   const [shakeCount, setShakeCount] = useState(0);
   const [motionPermission, setMotionPermission] = useState<PermissionState>('prompt');
   const isMobile = useIsMobile();
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [shakeQueue, setShakeQueue] = useState<number[]>([]);
+  const isAnimatingRef = useRef<boolean>(false);
+  const animationTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const animationStartTimeRef = useRef<number>(0);
 
   // Check if device motion is available and handle permissions
   const requestMotionPermission = async () => {
@@ -43,21 +48,53 @@ export default function Home() {
   };
 
   const triggerShake = useCallback((intensity: number) => {
-    // Increment shake counter to trigger new message
-    setShakeCount(count => count + 1);
-    
-    // Start shake animation
-    setIsShaken(true);
-    
-    // Reset shake after configured duration
-    setTimeout(() => {
-      setIsShaken(false);
-    }, shakeConfig.animations.shakeReset);
-    
-    // Trigger hearts with configured duration
-    setShakeIntensity(intensity);
-    setTimeout(() => setShakeIntensity(0), shakeConfig.animations.heartsReset);
-  }, []);
+    // Use ref instead of state to prevent race conditions
+    if (!isAnimatingRef.current) {
+      // Clear any existing timeout
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current);
+      }
+
+      // Start shake animation
+      isAnimatingRef.current = true;
+      animationStartTimeRef.current = Date.now(); // Track when animation starts
+      setIsAnimating(true);
+      setIsShaken(true);
+      setShakeIntensity(intensity);
+      setShakeCount(count => count + 1);
+      
+      // Reset shake after configured duration
+      animationTimeoutRef.current = setTimeout(() => {
+        setIsShaken(false);
+        setShakeIntensity(0);
+        setIsAnimating(false);
+        isAnimatingRef.current = false;
+        
+        // Process next shake in queue if any
+        setShakeQueue(prev => {
+          if (prev.length > 0) {
+            const [nextIntensity, ...rest] = prev;
+            // Small delay before triggering next shake to ensure clean transition
+            setTimeout(() => {
+              triggerShake(nextIntensity);
+            }, 16);
+            return rest;
+          }
+          return prev;
+        });
+      }, shakeConfig.animations.shakeReset);
+    } else {
+      // Only queue if we're not at the start of the animation
+      const timeSinceStart = Date.now() - animationStartTimeRef.current;
+      if (timeSinceStart > 100) { // Only queue if animation has been running for a bit
+        setShakeQueue(prev => {
+          // Hard limit at 1 item
+          if (prev.length >= 1) return prev;
+          return [...prev, intensity];
+        });
+      }
+    }
+  }, []); // Remove isAnimating from dependencies since we're using ref
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -112,6 +149,15 @@ export default function Home() {
   const handleClick = () => {
     triggerShake(shakeConfig.defaultTriggerIntensity);
   };
+
+  // Add cleanup in the component
+  useEffect(() => {
+    return () => {
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <main className="flex h-[100dvh] flex-col items-center justify-between p-4 bg-green-50 dark:bg-slate-900 relative">
