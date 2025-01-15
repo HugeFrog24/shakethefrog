@@ -7,8 +7,8 @@ export const appConfig = {
     ogImage: {
       width: 1200,
       height: 630,
-      bgColor: '#f0fdf4',
-      textColor: '#374151'
+      bgColor: '#c9ffda',
+      textColor: '#000000'
     }
   }
 } as const 
