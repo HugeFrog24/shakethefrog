@@ -10,6 +10,7 @@ interface Messages {
   en: string[];
   de: string[];
   ru: string[];
+  ka: string[];
 }
 
 function sortMessages() {
@@ -21,7 +22,8 @@ function sortMessages() {
     const sortedMessages: Messages = {
       en: [...messages.en].sort((a, b) => a.localeCompare(b, 'en')),
       de: [...messages.de].sort((a, b) => a.localeCompare(b, 'de')),
-      ru: [...messages.ru].sort((a, b) => a.localeCompare(b, 'ru'))
+      ru: [...messages.ru].sort((a, b) => a.localeCompare(b, 'ru')),
+      ka: [...messages.ka].sort((a, b) => a.localeCompare(b, 'ka'))
     };
 
     // Write back to JSON file with pretty printing

@@ -8,7 +8,8 @@ import { GlobeAltIcon } from '@heroicons/react/24/outline';
 const languages: Record<SupportedLanguage, string> = {
   en: 'English',
   de: 'Deutsch',
-  ru: 'Русский'
+  ru: 'Русский',
+  ka: 'ქართული'
 };
 
 export function LanguageToggle() {

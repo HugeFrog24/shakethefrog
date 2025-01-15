@@ -1,5 +1,5 @@
 // Define supported languages
-export type SupportedLanguage = 'en' | 'de' | 'ru';
+export type SupportedLanguage = 'en' | 'de' | 'ru' | 'ka';
 
 // Define the message structure
 export const defaultLanguage: SupportedLanguage = 'en';

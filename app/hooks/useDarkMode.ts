@@ -4,14 +4,14 @@ import { useState, useEffect } from 'react';
 
 export function useDarkMode() {
   const [darkMode, setDarkMode] = useState(false);
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    // Check if user has a dark mode preference in localStorage
+    // Get initial theme state
     const isDark = localStorage.getItem('darkMode') === 'true';
-    // Check system preference if no localStorage value
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
     setDarkMode(isDark ?? systemPrefersDark);
+    setInitialized(true);
 
     // Add listener for system theme changes
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -26,6 +26,7 @@ export function useDarkMode() {
   }, []);
 
   const toggleDarkMode = () => {
+    if (!initialized) return;
     setDarkMode(!darkMode);
     localStorage.setItem('darkMode', (!darkMode).toString());
   };

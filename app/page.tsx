@@ -165,7 +165,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex h-[100dvh] flex-col items-center justify-between p-4 bg-green-50 dark:bg-slate-900 relative">
+    <div className="flex h-[100dvh] flex-col items-center justify-between p-4 bg-green-50 dark:bg-slate-900 relative">
       <div className="w-full flex justify-between items-center">
         <LanguageToggle />
         <ThemeToggle />
@@ -226,6 +226,6 @@ export default function Home() {
           <ArrowTopRightOnSquareIcon className="w-3 h-3" />
         </a>
       </footer>
-    </main>
+    </div>
   );
 }
