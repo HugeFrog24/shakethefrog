@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { frogMessages, SupportedLanguage } from '../config/messages';
+import { getRandomEmoji } from '../config/emojis';
 
 // Increase visibility duration for speech bubbles
 const VISIBILITY_MS = 3000; // 3 seconds for message visibility
@@ -22,7 +23,8 @@ export function SpeechBubble({ triggerCount, language }: SpeechBubbleProps) {
   const getRandomMessage = useCallback(() => {
     const messages = frogMessages[language];
     const randomIndex = Math.floor(Math.random() * messages.length);
-    return messages[randomIndex];
+    const message = messages[randomIndex];
+    return `${message} ${getRandomEmoji()}`;
   }, [language]);
 
   // Handle new trigger events
