@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { frogMessages, SupportedLanguage } from '../config/messages';
+import { loadMessages, SupportedLanguage } from '../config/messages';
 import { getRandomEmoji } from '../config/emojis';
 
 // Increase visibility duration for speech bubbles
@@ -16,20 +16,30 @@ export function SpeechBubble({ triggerCount, language }: SpeechBubbleProps) {
   const [message, setMessage] = useState('');
   const [isVisible, setIsVisible] = useState(false);
   const [messageQueue, setMessageQueue] = useState<string[]>([]);
+  const [messages, setMessages] = useState<string[]>([]);
   const lastTriggerTime = useRef(0);
   const showTimeRef = useRef<number>(0);
   const lastFadeTime = useRef(0);
   
+  // Load messages when language changes
+  useEffect(() => {
+    loadMessages(language).then(newMessages => {
+      setMessages(newMessages);
+    }).catch(error => {
+      console.error('Failed to load messages:', error);
+    });
+  }, [language]);
+
   const getRandomMessage = useCallback(() => {
-    const messages = frogMessages[language];
+    if (messages.length === 0) return '';
     const randomIndex = Math.floor(Math.random() * messages.length);
     const message = messages[randomIndex];
     return `${message} ${getRandomEmoji()}`;
-  }, [language]);
+  }, [messages]);
 
   // Handle new trigger events
   useEffect(() => {
-    if (triggerCount === 0) return;
+    if (triggerCount === 0 || messages.length === 0) return;
     
     const now = Date.now();
     const timeSinceLastFade = now - lastFadeTime.current;
@@ -37,7 +47,9 @@ export function SpeechBubble({ triggerCount, language }: SpeechBubbleProps) {
     // If we're in cooldown, or a message is visible, queue the new message
     if (timeSinceLastFade < COOLDOWN_MS || isVisible) {
       const newMessage = getRandomMessage();
-      setMessageQueue(prev => [...prev, newMessage]);
+      if (newMessage) {
+        setMessageQueue(prev => [...prev, newMessage]);
+      }
       return;
     }
 
@@ -45,9 +57,11 @@ export function SpeechBubble({ triggerCount, language }: SpeechBubbleProps) {
     lastTriggerTime.current = now;
     showTimeRef.current = now;
     const newMessage = getRandomMessage();
-    setMessage(newMessage);
-    setIsVisible(true);
-  }, [triggerCount, getRandomMessage, isVisible]);
+    if (newMessage) {
+      setMessage(newMessage);
+      setIsVisible(true);
+    }
+  }, [triggerCount, getRandomMessage, isVisible, messages]);
 
   // Handle message queue
   useEffect(() => {

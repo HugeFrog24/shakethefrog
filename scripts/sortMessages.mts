@@ -1,17 +1,13 @@
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync, readdirSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const messagesPath = join(__dirname, '..', 'app', 'config', 'messages.json');
+const messagesDir = join(__dirname, '..', 'app', 'config', 'messages');
 
-interface Messages {
-  en: string[];
-  de: string[];
-  ru: string[];
-  ka: string[];
-}
+// Define supported languages
+type SupportedLanguage = 'en' | 'de' | 'ru' | 'ka';
 
 function stripEmojis(str: string): string {
   return str.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2700}-\u{27BF}]|[\u{2600}-\u{26FF}]/gu, '').trim();
@@ -19,19 +15,22 @@ function stripEmojis(str: string): string {
 
 function sortMessages() {
   try {
-    // Read and parse JSON
-    const messages: Messages = JSON.parse(readFileSync(messagesPath, 'utf8'));
-
-    // Check message lengths and collect warnings
+    // Get all JSON files in the messages directory
+    const files = readdirSync(messagesDir).filter(file => file.endsWith('.json'));
     const warnings: string[] = [];
     const CHARACTER_LIMIT = 41;
-    
-    // Check for duplicates in each language
-    Object.entries(messages).forEach(([lang, msgs]) => {
-      // Create a map of stripped messages to their original forms
+
+    files.forEach(file => {
+      const lang = file.replace('.json', '') as SupportedLanguage;
+      const filePath = join(messagesDir, file);
+      
+      // Read and parse JSON
+      const messages: string[] = JSON.parse(readFileSync(filePath, 'utf8'));
+
+      // Check message lengths and duplicates
       const strippedToOriginal = new Map<string, string[]>();
       
-      msgs.forEach((msg: string) => {
+      messages.forEach((msg: string) => {
         // Length check
         if (msg.length > CHARACTER_LIMIT) {
           warnings.push(
@@ -56,28 +55,23 @@ function sortMessages() {
           );
         }
       });
+
+      // Sort messages using appropriate locale
+      const sortedMessages = [...messages].sort((a, b) => a.localeCompare(b, lang));
+
+      // Write back to JSON file with pretty printing
+      writeFileSync(
+        filePath,
+        JSON.stringify(sortedMessages, null, 2),
+        'utf8'
+      );
+
+      console.log(`Messages sorted successfully for ${lang}!`);
     });
-
-    // Sort each language array
-    const sortedMessages: Messages = {
-      en: [...messages.en].sort((a, b) => a.localeCompare(b, 'en')),
-      de: [...messages.de].sort((a, b) => a.localeCompare(b, 'de')),
-      ru: [...messages.ru].sort((a, b) => a.localeCompare(b, 'ru')),
-      ka: [...messages.ka].sort((a, b) => a.localeCompare(b, 'ka'))
-    };
-
-    // Write back to JSON file with pretty printing
-    writeFileSync(
-      messagesPath, 
-      JSON.stringify(sortedMessages, null, 2),
-      'utf8'
-    );
-    
-    console.log('Messages sorted successfully!');
     
     // Display warnings if any were collected
     if (warnings.length > 0) {
-      console.warn('\nLength warnings:');
+      console.warn('\nWarnings:');
       warnings.forEach(warning => console.warn(warning));
     }
   } catch (error) {
@@ -85,4 +79,4 @@ function sortMessages() {
   }
 }
 
-sortMessages(); 
+sortMessages();
