@@ -1,5 +1,5 @@
 // Define supported languages
-export type SupportedLanguage = 'en' | 'de' | 'ru' | 'ka';
+export type SupportedLanguage = 'en' | 'de' | 'ru' | 'ka' | 'ar';
 
 // Define the message structure
 export const defaultLanguage: SupportedLanguage = 'en';
@@ -35,7 +35,8 @@ export const frogMessages: FrogMessages = {
   en: [],
   de: [],
   ru: [],
-  ka: []
+  ka: [],
+  ar: []
 };
 
 // Preload default language

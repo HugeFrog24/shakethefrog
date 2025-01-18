@@ -9,7 +9,8 @@ const languages: Record<SupportedLanguage, string> = {
   en: 'English',
   de: 'Deutsch',
   ru: 'Русский',
-  ka: 'ქართული'
+  ka: 'ქართული',
+  ar: 'العربية'
 };
 
 export function LanguageToggle() {
@@ -49,4 +50,4 @@ export function LanguageToggle() {
       </select>
     </div>
   );
-} 
+}
