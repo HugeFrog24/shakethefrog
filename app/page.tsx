@@ -6,11 +6,14 @@ import Image from 'next/image';
 import { FloatingHearts } from './components/FloatingHearts';
 import { ThemeToggle } from './components/ThemeToggle';
 import { SpeechBubble } from './components/SpeechBubble';
+import { SkinSelector } from './components/SkinSelector';
 import { shakeConfig } from './config/shake';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
 import { appConfig } from './config/app';
 import { useLanguage } from './hooks/useLanguage';
+import { useSkin } from './hooks/useSkin';
 import { LanguageToggle } from './components/LanguageToggle';
+import { SkinId } from './types';
 
 export default function Home() {
   const [isShaken, setIsShaken] = useState(false);
@@ -25,6 +28,7 @@ export default function Home() {
   const animationTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const animationStartTimeRef = useRef<number>(0);
   const language = useLanguage();
+  const currentSkin = useSkin();
 
   // Check if device motion is available and handle permissions
   const requestMotionPermission = async () => {
@@ -167,7 +171,10 @@ export default function Home() {
   return (
     <div className="flex h-[100dvh] flex-col items-center justify-between p-4 bg-green-50 dark:bg-slate-900 relative">
       <div className="w-full flex justify-between items-center">
-        <LanguageToggle />
+        <div className="flex items-center gap-2">
+          <LanguageToggle />
+          <SkinSelector />
+        </div>
         <ThemeToggle />
       </div>
       <div className="flex-1 flex flex-col items-center justify-center w-full">
@@ -187,8 +194,11 @@ export default function Home() {
             language={language} 
           />
           <Image
-            src={isShaken ? '/images/frog-shaken.svg' : '/images/frog.svg'}
-            alt="Frog"
+            src={isShaken
+              ? appConfig.skins[currentSkin].shaken
+              : appConfig.skins[currentSkin].normal
+            }
+            alt={appConfig.skins[currentSkin].name}
             width={200}
             height={200}
             priority

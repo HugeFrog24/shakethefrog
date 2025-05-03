@@ -10,5 +10,21 @@ export const appConfig = {
       bgColor: '#c9ffda',
       textColor: '#000000'
     }
-  }
-} as const 
+  },
+  skins: {
+    frog: {
+      id: 'frog',
+      name: 'Frog',
+      normal: '/images/frog.svg',
+      shaken: '/images/frog-shaken.svg'
+    },
+    mandarin: {
+      id: 'mandarin',
+      name: 'Mandarin',
+      normal: '/images/mandarin.svg',
+      // TODO: Create a proper shaken version of the mandarin skin
+      shaken: '/images/mandarin.svg' // Using the same image for both states until a shaken version is created
+    }
+  },
+  defaultSkin: 'frog'
+} as const
