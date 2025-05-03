@@ -13,7 +13,6 @@ import { appConfig } from './config/app';
 import { useLanguage } from './hooks/useLanguage';
 import { useSkin } from './hooks/useSkin';
 import { LanguageToggle } from './components/LanguageToggle';
-import { SkinId } from './types';
 
 export default function Home() {
   const [isShaken, setIsShaken] = useState(false);
