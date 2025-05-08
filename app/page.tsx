@@ -208,16 +208,16 @@ export default function Home() {
         <div className="mt-8 flex flex-col items-center gap-2">
           <p className="text-gray-600 dark:text-gray-400 text-center max-w-[240px]">
             {motionPermission === 'prompt' ? (
-              <button 
+              <button
                 onClick={requestMotionPermission}
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
               >
                 Enable device shake
               </button>
             ) : motionPermission === 'granted' ? (
-              `Shake your device${!isMobile ? ', press spacebar,' : ''} or click/tap frog!`
+              `Shake your device${!isMobile ? ', press spacebar,' : ''} or click/tap ${appConfig.skins[currentSkin].name.toLowerCase()}!`
             ) : (
-              `${!isMobile ? 'Press spacebar or ' : ''}Click/tap frog!`
+              `${!isMobile ? 'Press spacebar or ' : ''}Click/tap ${appConfig.skins[currentSkin].name.toLowerCase()}!`
             )}
           </p>
         </div>
