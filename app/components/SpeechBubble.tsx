@@ -94,19 +94,16 @@ export function SpeechBubble({ triggerCount, language }: SpeechBubbleProps) {
   }, [isVisible]);
 
   return (
-    <div 
-      className={`absolute -top-24 left-1/2 -translate-x-1/2 bg-white dark:bg-slate-800 
+    <div
+      className={`absolute -top-24 bg-white dark:bg-slate-800
                   px-4 py-2 rounded-xl shadow-lg z-20 transition-opacity duration-300
                   ${isVisible ? 'opacity-100 animate-float' : 'opacity-0 pointer-events-none'}`}
+      style={{
+        left: '50%',
+        transform: 'translateX(-50%)'
+      }}
     >
-      <div className="relative">
-        {message}
-        <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-0 h-0 
-                      border-l-[8px] border-l-transparent
-                      border-r-[8px] border-r-transparent
-                      border-t-[8px] border-t-white
-                      dark:border-t-slate-800" />
-      </div>
+      {message}
     </div>
   );
 }
