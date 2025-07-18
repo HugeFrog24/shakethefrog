@@ -1,35 +1,25 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useTheme } from '../providers/ThemeProvider';
 
+/**
+ * A simplified hook that provides dark mode state from ThemeProvider
+ * This hook is maintained for backward compatibility with existing components
+ */
 export function useDarkMode() {
-  const [darkMode, setDarkMode] = useState(false);
-  const [initialized, setInitialized] = useState(false);
+  const { darkMode, setThemeMode } = useTheme();
 
-  useEffect(() => {
-    // Get initial theme state
-    const isDark = localStorage.getItem('darkMode') === 'true';
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    setDarkMode(isDark ?? systemPrefersDark);
-    setInitialized(true);
-
-    // Add listener for system theme changes
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = (e: MediaQueryListEvent) => {
-      if (localStorage.getItem('darkMode') === null) {
-        setDarkMode(e.matches);
-      }
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
-
+  // Simplified toggle function that cycles between light and dark
   const toggleDarkMode = () => {
-    if (!initialized) return;
-    setDarkMode(!darkMode);
-    localStorage.setItem('darkMode', (!darkMode).toString());
+    console.log('useDarkMode - Toggling dark mode, current darkMode:', darkMode);
+    setThemeMode(darkMode ? 'light' : 'dark');
   };
 
-  return { darkMode, toggleDarkMode };
+  // For backward compatibility
+  const resetToSystemPreference = () => {
+    console.log('useDarkMode - Resetting to system preference');
+    setThemeMode('system');
+  };
+
+  return { darkMode, toggleDarkMode, resetToSystemPreference };
 }
