@@ -5,10 +5,12 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { appConfig } from '../config/app';
 import { SkinId } from '../types';
+import { useLocalizedSkinName } from '../hooks/useLocalizedSkinName';
 
 export function SkinSelector() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const getLocalizedSkinName = useLocalizedSkinName();
 
   const handleSkinChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
     const newSkin = event.target.value as SkinId;
@@ -36,7 +38,7 @@ export function SkinSelector() {
     <div className="flex items-center gap-2">
       <Image
         src={appConfig.skins[currentSkin].normal}
-        alt={appConfig.skins[currentSkin].name}
+        alt={getLocalizedSkinName(currentSkin)}
         width={20}
         height={20}
         className="text-gray-600 dark:text-gray-400"
@@ -47,9 +49,9 @@ export function SkinSelector() {
         className="bg-transparent text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
         aria-label="Select skin"
       >
-        {Object.entries(appConfig.skins).map(([id, skin]) => (
+        {Object.entries(appConfig.skins).map(([id]) => (
           <option key={id} value={id}>
-            {skin.name}
+            {getLocalizedSkinName(id)}
           </option>
         ))}
       </select>
