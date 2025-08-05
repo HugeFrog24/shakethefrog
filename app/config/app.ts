@@ -24,6 +24,13 @@ export const appConfig = {
       normal: '/images/mandarin.svg',
       // TODO: Create a proper shaken version of the mandarin skin
       shaken: '/images/mandarin.svg' // Using the same image for both states until a shaken version is created
+    },
+    beaver: {
+      id: 'beaver',
+      name: 'Beaver',
+      normal: '/images/beaver.svg',
+      // TODO: Create a proper shaken version of the beaver skin
+      shaken: '/images/beaver.svg' // Using the same image for both states until a shaken version is created
     }
   },
   defaultSkin: 'frog'

@@ -13,6 +13,8 @@ import { appConfig } from './config/app';
 import { useLanguage } from './hooks/useLanguage';
 import { useSkin } from './hooks/useSkin';
 import { LanguageToggle } from './components/LanguageToggle';
+import { useUIMessage } from './hooks/useUIMessage';
+import { useLocalizedSkinName } from './hooks/useLocalizedSkinName';
 
 export default function Home() {
   const [isShaken, setIsShaken] = useState(false);
@@ -28,6 +30,8 @@ export default function Home() {
   const animationStartTimeRef = useRef<number>(0);
   const language = useLanguage();
   const currentSkin = useSkin();
+  const getLocalizedSkinName = useLocalizedSkinName();
+  const getMessage = useUIMessage(getLocalizedSkinName);
 
   // Check if device motion is available and handle permissions
   const requestMotionPermission = async () => {
@@ -197,7 +201,7 @@ export default function Home() {
               ? appConfig.skins[currentSkin].shaken
               : appConfig.skins[currentSkin].normal
             }
-            alt={appConfig.skins[currentSkin].name}
+            alt={getLocalizedSkinName(currentSkin)}
             width={200}
             height={200}
             priority
@@ -208,16 +212,22 @@ export default function Home() {
         <div className="mt-8 flex flex-col items-center gap-2">
           <p className="text-gray-600 dark:text-gray-400 text-center max-w-[240px]">
             {motionPermission === 'prompt' ? (
-              <button 
+              <button
                 onClick={requestMotionPermission}
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
               >
-                Enable device shake
+                {getMessage('enableDeviceShake')}
               </button>
             ) : motionPermission === 'granted' ? (
-              `Shake your device${!isMobile ? ', press spacebar,' : ''} or click/tap frog!`
+              getMessage(
+                isMobile ? 'shakeInstructionsMobile' : 'shakeInstructionsDesktop',
+                { item: { id: currentSkin } }
+              )
             ) : (
-              `${!isMobile ? 'Press spacebar or ' : ''}Click/tap frog!`
+              getMessage(
+                isMobile ? 'noShakeInstructionsMobile' : 'noShakeInstructionsDesktop',
+                { item: { id: currentSkin } }
+              )
             )}
           </p>
         </div>
