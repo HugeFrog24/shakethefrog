@@ -47,7 +47,7 @@ function sortMessages() {
       });
 
       // Add duplicate warnings
-      strippedToOriginal.forEach((originals, stripped) => {
+      strippedToOriginal.forEach((originals) => {
         if (originals.length > 1) {
           warnings.push(
             `Warning: ${lang} has duplicate messages (ignoring emojis):\n` +
