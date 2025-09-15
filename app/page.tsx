@@ -159,6 +159,10 @@ export default function Home() {
   }, []);
 
   const handleClick = () => {
+    // Trigger haptic feedback for tap interaction
+    if ('vibrate' in navigator) {
+      navigator.vibrate(50); // Short 50ms vibration
+    }
     triggerShake(shakeConfig.defaultTriggerIntensity);
   };
 
