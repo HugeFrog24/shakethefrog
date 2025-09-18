@@ -1,10 +1,14 @@
 # Build stage
 FROM --platform=$BUILDPLATFORM node:24-slim AS builder
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
+
+# Install pnpm
+RUN npm install -g pnpm
+
+COPY package.json pnpm-lock.yaml* ./
+RUN pnpm install --frozen-lockfile
 COPY . .
-RUN npm run build
+RUN pnpm run build
 
 # Production stage
 FROM node:24-slim AS runner

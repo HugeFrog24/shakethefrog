@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "sort-messages": "node --loader ts-node/esm scripts/sortMessages.mts",
-    "lint:fix": "eslint --fix . && npm run sort-messages"
+    "lint:fix": "eslint --fix . && pnpm run sort-messages"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
