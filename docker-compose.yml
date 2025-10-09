@@ -3,6 +3,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      platforms:
+        - linux/amd64
+        - linux/arm64
     image: bogerserge/shakethefrog:latest
     ports:
       # HOST_PORT:CONTAINER_PORT - Maps port 3000 on the host to port 3000 in the container
@@ -19,6 +22,6 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1G
+          memory: 256M
         reservations:
-          memory: 512M
+          memory: 128M

@@ -1,0 +1,22 @@
+{
+  "enableDeviceShake": "تفعيل هز الجهاز",
+  "languages": {
+    "ar": "العربية",
+    "de": "الألمانية",
+    "en": "الإنجليزية",
+    "ka": "الجورجية",
+    "ru": "الروسية"
+  },
+  "languageSelector": "اختيار اللغة",
+  "noShakeInstructionsDesktop": "اضغط على مفتاح المسافة أو انقر/المس {item}!",
+  "noShakeInstructionsMobile": "انقر/المس {item}!",
+  "shakeCharacter": "هز {item}",
+  "shakeInstructionsDesktop": "هز جهازك، اضغط على مفتاح المسافة، أو انقر/المس {item}!",
+  "shakeInstructionsMobile": "هز جهازك أو انقر/المس {item}!",
+  "themes": {
+    "dark": "مظلم",
+    "light": "فاتح",
+    "system": "النظام"
+  },
+  "themeSelector": "اختيار المظهر"
+}

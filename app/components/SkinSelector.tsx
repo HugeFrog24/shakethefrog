@@ -1,32 +1,54 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { useLocale, useTranslations } from 'next-intl';
-import { Link } from '../../i18n/routing';
-import { GlobeAltIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
+import { appConfig } from '../config/app';
+import { SkinId } from '../types';
+import { useLocalizedSkinName } from '../hooks/useLocalizedSkinName';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
 
-type Locale = 'en' | 'de' | 'ru' | 'ka' | 'ar';
-
-interface LanguageOption {
-  code: Locale;
+interface SkinOption {
+  id: SkinId;
   name: string;
+  image: string;
 }
 
-export function LanguageToggle() {
-  const locale = useLocale() as Locale;
-  const t = useTranslations('ui');
+export function SkinSelector() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const getLocalizedSkinName = useLocalizedSkinName();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Define the available locales
-  const locales: Locale[] = ['en', 'de', 'ru', 'ka', 'ar'];
-
-  const languageOptions: LanguageOption[] = locales.map((code) => ({
-    code,
-    name: t(`languages.${code}`)
+  const skinOptions: SkinOption[] = Object.entries(appConfig.skins).map(([id, skin]) => ({
+    id: id as SkinId,
+    name: getLocalizedSkinName(id),
+    image: skin.normal
   }));
 
-  const currentLanguage = languageOptions.find(lang => lang.code === locale) || languageOptions[0];
+  const skinParam = searchParams.get('skin');
+  
+  // Validate that the skin exists in our config
+  const isValidSkin = skinParam && Object.keys(appConfig.skins).includes(skinParam);
+  
+  // Use the skin from URL if valid, otherwise use default skin
+  const currentSkin = (isValidSkin ? skinParam : appConfig.defaultSkin) as SkinId;
+  const currentSkinOption = skinOptions.find(skin => skin.id === currentSkin) || skinOptions[0];
+
+  const handleSkinChange = useCallback((newSkin: SkinId) => {
+    const params = new URLSearchParams(searchParams.toString());
+    
+    if (newSkin === appConfig.defaultSkin) {
+      params.delete('skin');
+    } else {
+      params.set('skin', newSkin);
+    }
+
+    const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
+    router.push(newUrl);
+    setIsOpen(false);
+  }, [router, searchParams]);
 
   // Handle clicking outside to close dropdown
   useEffect(() => {
@@ -72,13 +94,19 @@ export function LanguageToggle() {
       <button
         onClick={toggleDropdown}
         className="flex items-center gap-2 p-2 rounded-lg bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
-        aria-label={t('languageSelector')}
+        aria-label="Skin selector"
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
-        <GlobeAltIcon className="w-4 h-4 text-gray-700 dark:text-gray-300" />
+        <Image
+          src={currentSkinOption.image}
+          alt={currentSkinOption.name}
+          width={16}
+          height={16}
+          className="rounded"
+        />
         <span className="text-sm text-gray-700 dark:text-gray-300 min-w-[60px] text-left hidden min-[360px]:block">
-          {currentLanguage.name}
+          {currentSkinOption.name}
         </span>
         <ChevronDownIcon
           className={`w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform ${
@@ -91,27 +119,29 @@ export function LanguageToggle() {
       {isOpen && (
         <div className="absolute left-0 mt-2 w-36 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
           <div className="py-1">
-            {languageOptions.map((option) => (
-              <Link
-                key={option.code}
-                href="/"
-                locale={option.code}
-                onClick={() => setIsOpen(false)}
+            {skinOptions.map((option) => (
+              <button
+                key={option.id}
+                onClick={() => handleSkinChange(option.id)}
                 className={`w-full flex items-center gap-3 px-3 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                  locale === option.code
+                  currentSkin === option.id
                     ? 'bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400'
                     : 'text-gray-700 dark:text-gray-300'
                 }`}
                 role="menuitem"
               >
-                <GlobeAltIcon className={`w-4 h-4 ${
-                  locale === option.code ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'
-                }`} />
+                <Image
+                  src={option.image}
+                  alt={option.name}
+                  width={16}
+                  height={16}
+                  className="rounded"
+                />
                 <span>{option.name}</span>
-                {locale === option.code && (
+                {currentSkin === option.id && (
                   <div className="ml-auto w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
                 )}
-              </Link>
+              </button>
             ))}
           </div>
         </div>
