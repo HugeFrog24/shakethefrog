@@ -1,14 +1,19 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useIsMobile } from './hooks/useIsMobile';
+import { useIsMobile } from '../hooks/useIsMobile';
 import Image from 'next/image';
-import { FloatingHearts } from './components/FloatingHearts';
-import { ThemeToggle } from './components/ThemeToggle';
-import { SpeechBubble } from './components/SpeechBubble';
-import { shakeConfig } from './config/shake';
+import { FloatingHearts } from '../components/FloatingHearts';
+import { ThemeToggle } from '../components/ThemeToggle';
+import { SpeechBubble } from '../components/SpeechBubble';
+import { SkinSelector } from '../components/SkinSelector';
+import { shakeConfig } from '../config/shake';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
-import { appConfig } from './config/app';
+import { appConfig } from '../config/app';
+import { useSkin } from '../hooks/useSkin';
+import { LanguageToggle } from '../components/LanguageToggle';
+import { useTranslations } from 'next-intl';
+import { useLocalizedSkinName } from '../hooks/useLocalizedSkinName';
 
 export default function Home() {
   const [isShaken, setIsShaken] = useState(false);
@@ -22,6 +27,9 @@ export default function Home() {
   const isAnimatingRef = useRef<boolean>(false);
   const animationTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const animationStartTimeRef = useRef<number>(0);
+  const currentSkin = useSkin();
+  const getLocalizedSkinName = useLocalizedSkinName();
+  const t = useTranslations('ui');
 
   // Check if device motion is available and handle permissions
   const requestMotionPermission = async () => {
@@ -149,6 +157,10 @@ export default function Home() {
   }, []);
 
   const handleClick = () => {
+    // Trigger haptic feedback for tap interaction
+    if ('vibrate' in navigator) {
+      navigator.vibrate(50); // Short 50ms vibration
+    }
     triggerShake(shakeConfig.defaultTriggerIntensity);
   };
 
@@ -162,8 +174,14 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex h-[100dvh] flex-col items-center justify-between p-4 bg-green-50 dark:bg-slate-900 relative">
-      <ThemeToggle />
+    <div className="flex h-[100dvh] flex-col items-center justify-between p-4 bg-green-50 dark:bg-slate-900 relative">
+      <div className="w-full flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <LanguageToggle />
+          <SkinSelector />
+        </div>
+        <ThemeToggle />
+      </div>
       <div className="flex-1 flex flex-col items-center justify-center w-full">
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <FloatingHearts intensity={shakeIntensity} />
@@ -172,13 +190,19 @@ export default function Home() {
         <button 
           onClick={handleClick}
           className="relative z-10"
-          aria-label="Shake the frog"
+          aria-label={t('shakeCharacter', { item: getLocalizedSkinName(currentSkin) })}
         >
           <FloatingHearts intensity={shakeIntensity} />
-          <SpeechBubble isShaken={isShaken} triggerCount={shakeCount} />
+          <SpeechBubble
+            isShaken={isShaken}
+            triggerCount={shakeCount}
+          />
           <Image
-            src={isShaken ? '/images/frog-shaken.svg' : '/images/frog.svg'}
-            alt="Frog"
+            src={isShaken
+              ? appConfig.skins[currentSkin].shaken
+              : appConfig.skins[currentSkin].normal
+            }
+            alt={getLocalizedSkinName(currentSkin)}
             width={200}
             height={200}
             priority
@@ -189,16 +213,22 @@ export default function Home() {
         <div className="mt-8 flex flex-col items-center gap-2">
           <p className="text-gray-600 dark:text-gray-400 text-center max-w-[240px]">
             {motionPermission === 'prompt' ? (
-              <button 
+              <button
                 onClick={requestMotionPermission}
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
               >
-                Enable device shake
+                {t('enableDeviceShake')}
               </button>
             ) : motionPermission === 'granted' ? (
-              `Shake your device${!isMobile ? ', press spacebar,' : ''} or click/tap frog!`
+              t(
+                isMobile ? 'shakeInstructionsMobile' : 'shakeInstructionsDesktop',
+                { item: getLocalizedSkinName(currentSkin) }
+              )
             ) : (
-              `${!isMobile ? 'Press spacebar or ' : ''}Click/tap frog!`
+              t(
+                isMobile ? 'noShakeInstructionsMobile' : 'noShakeInstructionsDesktop',
+                { item: getLocalizedSkinName(currentSkin) }
+              )
             )}
           </p>
         </div>
@@ -216,6 +246,6 @@ export default function Home() {
           <ArrowTopRightOnSquareIcon className="w-3 h-3" />
         </a>
       </footer>
-    </main>
+    </div>
   );
 }
