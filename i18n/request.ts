@@ -16,16 +16,15 @@ export default getRequestConfig(async ({ requestLocale }) => {
   }
 
   // Load messages from both ui and character directories
-  const [uiMessages, characterMessages] = await Promise.all([
-    import(`../messages/ui/${locale}.json`),
-    import(`../messages/character/${locale}.json`)
-  ]);
+  // Read how to split localization files here:
+  // https://next-intl.dev/docs/usage/configuration#messages-split-files
+  const messages = {
+    ui: (await import(`../messages/ui/${locale}.json`)).default,
+    character: (await import(`../messages/character/${locale}.json`)).default
+  };
 
   return {
     locale,
-    messages: {
-      ui: uiMessages.default,
-      character: characterMessages.default
-    }
+    messages
   };
 });
