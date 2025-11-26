@@ -1,5 +1,5 @@
 # Build stage
-FROM --platform=$BUILDPLATFORM node:24-slim AS builder
+FROM --platform=$BUILDPLATFORM node:25-slim AS builder
 WORKDIR /app
 
 # Install pnpm
@@ -11,7 +11,7 @@ COPY . .
 RUN pnpm run build
 
 # Production stage
-FROM node:24-slim AS runner
+FROM node:25-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
