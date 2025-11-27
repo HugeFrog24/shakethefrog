@@ -1,4 +1,22 @@
 {
+  "checkout": {
+    "cancel": {
+      "title": "Kauf abgebrochen",
+      "message": "Ihr Kauf wurde abgebrochen. Es wurden keine Gebühren von Ihrem Konto abgebucht.",
+      "tryAgain": "Sie können jederzeit erneut versuchen, Premium-Skins freizuschalten.",
+      "backToApp": "Zurück zur App",
+      "redirecting": "Automatische Weiterleitung in {countdown} Sekunden...",
+      "needHelp": "Brauchen Sie Hilfe? Kontaktieren Sie unser Support-Team."
+    },
+    "success": {
+      "title": "Kauf erfolgreich!",
+      "unlockedSkin": "Sie haben erfolgreich den {skinName} Skin freigeschaltet!",
+      "thankYou": "Vielen Dank für Ihren Kauf. Ihr Premium-Skin ist jetzt verfügbar.",
+      "goToApp": "Zur App",
+      "redirecting": "Automatische Weiterleitung in {countdown} Sekunden...",
+      "receiptSent": "Eine Quittung wurde an Ihre E-Mail-Adresse gesendet."
+    }
+  },
   "enableDeviceShake": "Geräte-Schütteln aktivieren",
   "languages": {
     "ar": "Arabisch",

@@ -2,6 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createHmac } from 'crypto';
 import { lemonSqueezyConfig } from '../../../config/lemonsqueezy';
 
+// Webhook payload interface using proper typing
+interface WebhookPayload {
+  meta: {
+    event_name: string;
+    custom_data?: Record<string, unknown>;
+  };
+  data: {
+    type: string;
+    id: string;
+    attributes: Record<string, unknown>;
+    relationships?: Record<string, unknown>;
+  };
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.text();
@@ -71,15 +85,17 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function handleOrderCreated(payload: any) {
+async function handleOrderCreated(payload: WebhookPayload) {
   const order = payload.data;
-  const customData = order.attributes.first_order_item?.product_name;
+  const attributes = order.attributes as Record<string, unknown>;
+  const firstOrderItem = attributes.first_order_item as Record<string, unknown> | undefined;
+  const customData = firstOrderItem?.product_name;
   
   console.log('Order created:', {
     orderId: order.id,
-    customerEmail: order.attributes.user_email,
-    total: order.attributes.total_formatted,
-    status: order.attributes.status,
+    customerEmail: attributes.user_email,
+    total: attributes.total_formatted,
+    status: attributes.status,
     customData: customData,
   });
 
@@ -90,14 +106,15 @@ async function handleOrderCreated(payload: any) {
   // - Grant access to premium features
 }
 
-async function handleSubscriptionCreated(payload: any) {
+async function handleSubscriptionCreated(payload: WebhookPayload) {
   const subscription = payload.data;
+  const attributes = subscription.attributes as Record<string, unknown>;
   
   console.log('Subscription created:', {
     subscriptionId: subscription.id,
-    customerEmail: subscription.attributes.user_email,
-    status: subscription.attributes.status,
-    productName: subscription.attributes.product_name,
+    customerEmail: attributes.user_email,
+    status: attributes.status,
+    productName: attributes.product_name,
   });
 
   // Handle subscription creation
@@ -106,13 +123,14 @@ async function handleSubscriptionCreated(payload: any) {
   // - Grant premium access
 }
 
-async function handleSubscriptionUpdated(payload: any) {
+async function handleSubscriptionUpdated(payload: WebhookPayload) {
   const subscription = payload.data;
+  const attributes = subscription.attributes as Record<string, unknown>;
   
   console.log('Subscription updated:', {
     subscriptionId: subscription.id,
-    status: subscription.attributes.status,
-    endsAt: subscription.attributes.ends_at,
+    status: attributes.status,
+    endsAt: attributes.ends_at,
   });
 
   // Handle subscription updates
@@ -120,13 +138,14 @@ async function handleSubscriptionUpdated(payload: any) {
   // - Handle plan changes
 }
 
-async function handleSubscriptionCancelled(payload: any) {
+async function handleSubscriptionCancelled(payload: WebhookPayload) {
   const subscription = payload.data;
+  const attributes = subscription.attributes as Record<string, unknown>;
   
   console.log('Subscription cancelled:', {
     subscriptionId: subscription.id,
-    customerEmail: subscription.attributes.user_email,
-    endsAt: subscription.attributes.ends_at,
+    customerEmail: attributes.user_email,
+    endsAt: attributes.ends_at,
   });
 
   // Handle subscription cancellation

@@ -61,7 +61,7 @@ export default function CheckoutSuccessPage() {
 
         {/* Success Message */}
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-          Purchase Successful!
+          {t('checkout.success.title')}
         </h1>
 
         {skin && (
@@ -74,13 +74,13 @@ export default function CheckoutSuccessPage() {
               />
             </div>
             <p className="text-gray-600 dark:text-gray-300">
-              You've successfully unlocked the <strong>{skinName}</strong> skin!
+              {t('checkout.success.unlockedSkin', { skinName })}
             </p>
           </div>
         )}
 
         <p className="text-gray-500 dark:text-gray-400 mb-6">
-          Thank you for your purchase. Your premium skin is now available.
+          {t('checkout.success.thankYou')}
         </p>
 
         {/* Action Buttons */}
@@ -89,18 +89,18 @@ export default function CheckoutSuccessPage() {
             onClick={handleGoToApp}
             className="w-full px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors font-medium"
           >
-            Go to App
+            {t('checkout.success.goToApp')}
           </button>
           
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Redirecting automatically in {countdown} seconds...
+            {t('checkout.success.redirecting', { countdown })}
           </p>
         </div>
 
         {/* Receipt Info */}
         <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            A receipt has been sent to your email address.
+            {t('checkout.success.receiptSent')}
           </p>
         </div>
       </div>

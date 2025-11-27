@@ -1,4 +1,22 @@
 {
+  "checkout": {
+    "cancel": {
+      "title": "Purchase Cancelled",
+      "message": "Your purchase was cancelled. No charges were made to your account.",
+      "tryAgain": "You can try again anytime to unlock premium skins.",
+      "backToApp": "Back to App",
+      "redirecting": "Redirecting automatically in {countdown} seconds...",
+      "needHelp": "Need help? Contact our support team."
+    },
+    "success": {
+      "title": "Purchase Successful!",
+      "unlockedSkin": "You've successfully unlocked the {skinName} skin!",
+      "thankYou": "Thank you for your purchase. Your premium skin is now available.",
+      "goToApp": "Go to App",
+      "redirecting": "Redirecting automatically in {countdown} seconds...",
+      "receiptSent": "A receipt has been sent to your email address."
+    }
+  },
   "enableDeviceShake": "Enable device shake",
   "languages": {
     "ar": "Arabic",

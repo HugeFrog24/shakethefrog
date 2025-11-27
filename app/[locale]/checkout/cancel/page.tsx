@@ -41,15 +41,15 @@ export default function CheckoutCancelPage() {
 
         {/* Cancel Message */}
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-          Purchase Cancelled
+          {t('checkout.cancel.title')}
         </h1>
 
         <p className="text-gray-600 dark:text-gray-300 mb-6">
-          Your purchase was cancelled. No charges were made to your account.
+          {t('checkout.cancel.message')}
         </p>
 
         <p className="text-gray-500 dark:text-gray-400 mb-6">
-          You can try again anytime to unlock premium skins.
+          {t('checkout.cancel.tryAgain')}
         </p>
 
         {/* Action Buttons */}
@@ -58,18 +58,18 @@ export default function CheckoutCancelPage() {
             onClick={handleGoBack}
             className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium"
           >
-            Back to App
+            {t('checkout.cancel.backToApp')}
           </button>
           
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Redirecting automatically in {countdown} seconds...
+            {t('checkout.cancel.redirecting', { countdown })}
           </p>
         </div>
 
         {/* Help Info */}
         <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            Need help? Contact our support team.
+            {t('checkout.cancel.needHelp')}
           </p>
         </div>
       </div>
