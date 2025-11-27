@@ -1,0 +1,22 @@
+{
+  "enableDeviceShake": "Включить встряску устройства",
+  "languages": {
+    "ar": "Арабский",
+    "de": "Немецкий",
+    "en": "Английский",
+    "ka": "Грузинский",
+    "ru": "Русский"
+  },
+  "languageSelector": "Выбор языка",
+  "noShakeInstructionsDesktop": "Нажмите пробел или нажмите/коснитесь {item}!",
+  "noShakeInstructionsMobile": "Нажмите/коснитесь {item}!",
+  "shakeCharacter": "Встряхните {item}",
+  "shakeInstructionsDesktop": "Встряхните устройство, нажмите пробел, или нажмите/коснитесь {item}!",
+  "shakeInstructionsMobile": "Встряхните устройство или нажмите/коснитесь {item}!",
+  "themes": {
+    "dark": "Тёмная",
+    "light": "Светлая",
+    "system": "Системная"
+  },
+  "themeSelector": "Выбор темы"
+}
