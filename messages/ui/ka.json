@@ -1,0 +1,22 @@
+{
+  "enableDeviceShake": "მოწყობილობის შერყევის ჩართვა",
+  "languages": {
+    "ar": "არაბული",
+    "de": "გერმანული",
+    "en": "ინგლისური",
+    "ka": "ქართული",
+    "ru": "რუსული"
+  },
+  "languageSelector": "ენის არჩევა",
+  "noShakeInstructionsDesktop": "დააჭირეთ Space-ს ან დააწკაპუნეთ/შეეხეთ {item}!",
+  "noShakeInstructionsMobile": "დააწკაპუნეთ/შეეხეთ {item}!",
+  "shakeCharacter": "შეარხიეთ {item}",
+  "shakeInstructionsDesktop": "შეარხიეთ თქვენი მოწყობილობა, დააჭირეთ Space-ს, ან დააწკაპუნეთ/შეეხეთ {item}!",
+  "shakeInstructionsMobile": "შეარხიეთ თქვენი მოწყობილობა ან დააწკაპუნეთ/შეეხეთ {item}!",
+  "themes": {
+    "dark": "მუქი",
+    "light": "ღია",
+    "system": "სისტემური"
+  },
+  "themeSelector": "თემის არჩევა"
+}

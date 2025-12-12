@@ -1,6 +1,7 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Override the dark variant to use class-based dark mode instead of media query */
+@custom-variant dark (&:where(.dark, .dark *));
 
 html, body {
   -webkit-tap-highlight-color: transparent;
@@ -59,19 +60,19 @@ body {
 @keyframes float {
   0% {
     opacity: 0;
-    transform: translate(-50%, 10px);
+    transform: translateX(-50%) translateY(10px);
   }
   20% {
     opacity: 1;
-    transform: translate(-50%, 0);
+    transform: translateX(-50%) translateY(0);
   }
   80% {
     opacity: 1;
-    transform: translate(-50%, 0);
+    transform: translateX(-50%) translateY(0);
   }
   100% {
     opacity: 0;
-    transform: translate(-50%, -10px);
+    transform: translateX(-50%) translateY(-10px);
   }
 }
 

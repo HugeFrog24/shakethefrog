@@ -1,0 +1,22 @@
+{
+  "enableDeviceShake": "Geräte-Schütteln aktivieren",
+  "languages": {
+    "ar": "Arabisch",
+    "de": "Deutsch",
+    "en": "Englisch",
+    "ka": "Georgisch",
+    "ru": "Russisch"
+  },
+  "languageSelector": "Sprachauswahl",
+  "noShakeInstructionsDesktop": "Drücke die Leertaste oder klicke/tippe auf {item}!",
+  "noShakeInstructionsMobile": "Klicke/tippe auf {item}!",
+  "shakeCharacter": "Schüttle den {item}",
+  "shakeInstructionsDesktop": "Schüttle dein Gerät, drücke die Leertaste, oder klicke/tippe auf {item}!",
+  "shakeInstructionsMobile": "Schüttle dein Gerät oder klicke/tippe auf {item}!",
+  "themes": {
+    "dark": "Dunkel",
+    "light": "Hell",
+    "system": "System"
+  },
+  "themeSelector": "Design-Auswahl"
+}

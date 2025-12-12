@@ -18,23 +18,33 @@ export async function GET(request: Request) {
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: appConfig.assets.ogImage.bgColor,
-          fontSize: 60,
+          fontSize: 72,
           fontWeight: 600,
         }}
       >
         <img
           src={`${baseUrl}${appConfig.assets.favicon}`}
           alt={appConfig.name}
-          width={200}
-          height={200}
+          width={300}
+          height={300}
           style={{ margin: '0 0 40px' }}
         />
-        <div style={{ marginBottom: 20 }}>{appConfig.name}</div>
+        <div
+          style={{
+            marginBottom: 30,
+            color: appConfig.assets.ogImage.textColor,
+          }}
+        >
+          {appConfig.name}
+        </div>
         <div 
           style={{ 
-            fontSize: 30, 
+            fontSize: 36,
             fontWeight: 400,
-            color: appConfig.assets.ogImage.textColor
+            color: appConfig.assets.ogImage.textColor,
+            textAlign: 'center',
+            maxWidth: '80%',
+            lineHeight: 1.4,
           }}
         >
           {appConfig.description}

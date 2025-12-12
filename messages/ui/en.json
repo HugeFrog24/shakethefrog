@@ -1,0 +1,22 @@
+{
+  "enableDeviceShake": "Enable device shake",
+  "languages": {
+    "ar": "Arabic",
+    "de": "German",
+    "en": "English",
+    "ka": "Georgian",
+    "ru": "Russian"
+  },
+  "languageSelector": "Language selector",
+  "noShakeInstructionsDesktop": "Press spacebar or click/tap {item}!",
+  "noShakeInstructionsMobile": "Click/tap {item}!",
+  "shakeCharacter": "Shake the {item}",
+  "shakeInstructionsDesktop": "Shake your device, press spacebar, or click/tap {item}!",
+  "shakeInstructionsMobile": "Shake your device or click/tap {item}!",
+  "themes": {
+    "dark": "Dark",
+    "light": "Light",
+    "system": "System"
+  },
+  "themeSelector": "Theme selector"
+}
