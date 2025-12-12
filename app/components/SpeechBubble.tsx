@@ -2,9 +2,8 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { useMessages } from 'next-intl';
 import { getRandomEmoji } from '../config/emojis';
 
-// Increase visibility duration for speech bubbles
-const VISIBILITY_MS = 3000; // 3 seconds for message visibility
-const COOLDOWN_MS = 2000;   // 2 seconds between new messages
+const VISIBILITY_MS = 3000;
+const COOLDOWN_MS = 2000;
 
 interface SpeechBubbleProps {
   isShaken: boolean;
@@ -21,17 +20,13 @@ export function SpeechBubble({ triggerCount }: SpeechBubbleProps) {
   const showTimeRef = useRef<number>(0);
   const lastFadeTime = useRef(0);
   
-  // Load messages when component mounts or language changes
   useEffect(() => {
-    // Only run if we haven't loaded messages yet
     if (messagesRef.current.length > 0) return;
     
-    // Get the character messages from the messages object
     try {
       const characterMessages = allMessages.character;
       
       if (characterMessages && typeof characterMessages === 'object') {
-        // Convert object values to array
         const messageArray = Object.values(characterMessages) as string[];
         
         if (messageArray.length === 0) {
@@ -47,24 +42,22 @@ export function SpeechBubble({ triggerCount }: SpeechBubbleProps) {
     } catch (error) {
       console.error(`Error loading character messages:`, error);
     }
-  }, [allMessages]); // Depend on allMessages to reload when they change
+  }, [allMessages]);
 
   const getRandomMessage = useCallback(() => {
     const currentMessages = messagesRef.current;
     if (currentMessages.length === 0) return '';
     const randomIndex = Math.floor(Math.random() * currentMessages.length);
-    const message = currentMessages[randomIndex];
-    return `${message} ${getRandomEmoji()}`;
-  }, []); // No dependencies needed since we use ref
+    const messageValue = currentMessages[randomIndex];
+    return `${messageValue} ${getRandomEmoji()}`;
+  }, []);
 
-  // Handle new trigger events
   useEffect(() => {
     if (triggerCount === 0 || messagesRef.current.length === 0) return;
     
     const now = Date.now();
     const timeSinceLastFade = now - lastFadeTime.current;
 
-    // If we're in cooldown, or a message is visible, queue the new message
     if (timeSinceLastFade < COOLDOWN_MS || isVisible) {
       const newMessage = getRandomMessage();
       if (newMessage) {
@@ -73,7 +66,6 @@ export function SpeechBubble({ triggerCount }: SpeechBubbleProps) {
       return;
     }
 
-    // Otherwise, show the message immediately
     lastTriggerTime.current = now;
     showTimeRef.current = now;
     const newMessage = getRandomMessage();
@@ -83,17 +75,15 @@ export function SpeechBubble({ triggerCount }: SpeechBubbleProps) {
     }
   }, [triggerCount, isVisible, getRandomMessage]);
 
-  // Handle message queue
   useEffect(() => {
     if (messageQueue.length === 0 || isVisible) return;
 
     const now = Date.now();
     const timeSinceLastFade = now - lastFadeTime.current;
 
-    // Only show next message if cooldown has expired
     if (timeSinceLastFade >= COOLDOWN_MS) {
       const nextMessage = messageQueue[0];
-      setMessageQueue(prev => prev.slice(1)); // Remove the message from queue
+      setMessageQueue(prev => prev.slice(1));
       lastTriggerTime.current = now;
       showTimeRef.current = now;
       setMessage(nextMessage);
@@ -101,7 +91,6 @@ export function SpeechBubble({ triggerCount }: SpeechBubbleProps) {
     }
   }, [messageQueue, isVisible]);
 
-  // Handle visibility duration
   useEffect(() => {
     if (!isVisible) return;
 

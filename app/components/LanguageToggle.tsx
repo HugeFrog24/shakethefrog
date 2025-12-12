@@ -18,7 +18,6 @@ export function LanguageToggle() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Define the available locales
   const locales: Locale[] = ['en', 'de', 'ru', 'ka', 'ar'];
 
   const languageOptions: LanguageOption[] = locales.map((code) => ({
@@ -28,7 +27,6 @@ export function LanguageToggle() {
 
   const currentLanguage = languageOptions.find(lang => lang.code === locale) || languageOptions[0];
 
-  // Handle clicking outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -45,7 +43,6 @@ export function LanguageToggle() {
     };
   }, [isOpen]);
 
-  // Handle escape key to close dropdown
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -68,7 +65,6 @@ export function LanguageToggle() {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* Main toggle button */}
       <button
         onClick={toggleDropdown}
         className="flex items-center gap-2 p-2 rounded-lg bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
@@ -87,7 +83,6 @@ export function LanguageToggle() {
         />
       </button>
 
-      {/* Dropdown menu */}
       {isOpen && (
         <div className="absolute left-0 mt-2 w-36 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
           <div className="py-1">

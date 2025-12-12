@@ -31,17 +31,14 @@ export default function Home() {
   const getLocalizedSkinName = useLocalizedSkinName();
   const t = useTranslations('ui');
 
-  // Check if device motion is available and handle permissions
   const requestMotionPermission = async () => {
     if (typeof window === 'undefined') return;
 
-    // Check if device motion is available
     if (!('DeviceMotionEvent' in window)) {
       setMotionPermission('denied');
       return;
     }
 
-    // Request permission on iOS devices
     if ('requestPermission' in DeviceMotionEvent) {
       try {
         // @ts-expect-error - TypeScript doesn't know about requestPermission
@@ -52,39 +49,32 @@ export default function Home() {
         setMotionPermission('denied');
       }
     } else {
-      // Android or desktop - no permission needed
       setMotionPermission('granted');
     }
   };
 
   const triggerShake = useCallback((intensity: number) => {
-    // Use ref instead of state to prevent race conditions
     if (!isAnimatingRef.current) {
-      // Clear any existing timeout
       if (animationTimeoutRef.current) {
         clearTimeout(animationTimeoutRef.current);
       }
 
-      // Start shake animation
       isAnimatingRef.current = true;
-      animationStartTimeRef.current = Date.now(); // Track when animation starts
+      animationStartTimeRef.current = Date.now();
       setIsAnimating(true);
       setIsShaken(true);
       setShakeIntensity(intensity);
       setShakeCount(count => count + 1);
       
-      // Reset shake after configured duration
       animationTimeoutRef.current = setTimeout(() => {
         setIsShaken(false);
         setShakeIntensity(0);
         setIsAnimating(false);
         isAnimatingRef.current = false;
         
-        // Process next shake in queue if any
         setShakeQueue(prev => {
           if (prev.length > 0) {
             const [nextIntensity, ...rest] = prev;
-            // Small delay before triggering next shake to ensure clean transition
             setTimeout(() => {
               triggerShake(nextIntensity);
             }, 16);
@@ -94,17 +84,15 @@ export default function Home() {
         });
       }, shakeConfig.animations.shakeReset);
     } else {
-      // Only queue if we're not at the start of the animation
       const timeSinceStart = Date.now() - animationStartTimeRef.current;
-      if (timeSinceStart > 100) { // Only queue if animation has been running for a bit
+      if (timeSinceStart > 100) {
         setShakeQueue(prev => {
-          // Hard limit at 1 item
           if (prev.length >= 1) return prev;
           return [...prev, intensity];
         });
       }
     }
-  }, []); // Remove isAnimating from dependencies since we're using ref
+  }, []);
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -133,7 +121,6 @@ export default function Home() {
       }
     };
 
-    // Only add motion listener if permission is granted
     if (typeof window !== 'undefined') {
       if (motionPermission === 'granted' && 'DeviceMotionEvent' in window) {
         window.addEventListener('devicemotion', handleMotion);
@@ -151,20 +138,17 @@ export default function Home() {
     };
   }, [lastUpdate, motionPermission, triggerShake]);
 
-  // Initial permission check
   useEffect(() => {
     requestMotionPermission();
   }, []);
 
   const handleClick = () => {
-    // Trigger haptic feedback for tap interaction
     if ('vibrate' in navigator) {
       navigator.vibrate(50); // Short 50ms vibration
     }
     triggerShake(shakeConfig.defaultTriggerIntensity);
   };
 
-  // Add cleanup in the component
   useEffect(() => {
     return () => {
       if (animationTimeoutRef.current) {
@@ -249,3 +233,4 @@ export default function Home() {
     </div>
   );
 }
+

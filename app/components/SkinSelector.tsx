@@ -6,7 +6,9 @@ import Image from 'next/image';
 import { appConfig } from '../config/app';
 import { SkinId } from '../types';
 import { useLocalizedSkinName } from '../hooks/useLocalizedSkinName';
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import { usePrices } from '../hooks/usePrices';
+import { ChevronDownIcon, LockClosedIcon } from '@heroicons/react/24/outline';
+import { PremiumCheckout } from './PremiumCheckout';
 
 interface SkinOption {
   id: SkinId;
@@ -18,7 +20,9 @@ export function SkinSelector() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const getLocalizedSkinName = useLocalizedSkinName();
+  const { getPrice, loading: pricesLoading } = usePrices();
   const [isOpen, setIsOpen] = useState(false);
+  const [showCheckout, setShowCheckout] = useState<SkinId | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const skinOptions: SkinOption[] = Object.entries(appConfig.skins).map(([id, skin]) => ({
@@ -37,6 +41,16 @@ export function SkinSelector() {
   const currentSkinOption = skinOptions.find(skin => skin.id === currentSkin) || skinOptions[0];
 
   const handleSkinChange = useCallback((newSkin: SkinId) => {
+    const skin = appConfig.skins[newSkin];
+    
+    // If it's a premium skin, show checkout modal
+    if (skin.isPremium) {
+      setShowCheckout(newSkin);
+      setIsOpen(false);
+      return;
+    }
+
+    // For free skins, change immediately
     const params = new URLSearchParams(searchParams.toString());
     
     if (newSkin === appConfig.defaultSkin) {
@@ -49,6 +63,10 @@ export function SkinSelector() {
     router.push(newUrl);
     setIsOpen(false);
   }, [router, searchParams]);
+
+  const handleCheckoutClose = useCallback(() => {
+    setShowCheckout(null);
+  }, []);
 
   // Handle clicking outside to close dropdown
   useEffect(() => {
@@ -119,32 +137,55 @@ export function SkinSelector() {
       {isOpen && (
         <div className="absolute left-0 mt-2 w-36 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
           <div className="py-1">
-            {skinOptions.map((option) => (
-              <button
-                key={option.id}
-                onClick={() => handleSkinChange(option.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                  currentSkin === option.id
-                    ? 'bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400'
-                    : 'text-gray-700 dark:text-gray-300'
-                }`}
-                role="menuitem"
-              >
-                <Image
-                  src={option.image}
-                  alt={option.name}
-                  width={16}
-                  height={16}
-                  className="rounded"
-                />
-                <span>{option.name}</span>
-                {currentSkin === option.id && (
-                  <div className="ml-auto w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
-                )}
-              </button>
-            ))}
+            {skinOptions.map((option) => {
+              const skin = appConfig.skins[option.id];
+              const isPremium = skin.isPremium;
+              
+              return (
+                <button
+                  key={option.id}
+                  onClick={() => handleSkinChange(option.id)}
+                  className={`w-full flex items-center gap-3 px-3 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
+                    currentSkin === option.id
+                      ? 'bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400'
+                      : 'text-gray-700 dark:text-gray-300'
+                  }`}
+                  role="menuitem"
+                >
+                  <div className="relative">
+                    <Image
+                      src={option.image}
+                      alt={option.name}
+                      width={16}
+                      height={16}
+                      className="rounded"
+                    />
+                    {isPremium && (
+                      <LockClosedIcon className="absolute -top-1 -right-1 w-3 h-3 text-yellow-500" />
+                    )}
+                  </div>
+                  <span className="flex-1">{option.name}</span>
+                  {isPremium && (
+                    <span className="text-xs text-yellow-600 dark:text-yellow-400 font-medium">
+                      {pricesLoading ? '...' : getPrice(option.id)}
+                    </span>
+                  )}
+                  {currentSkin === option.id && (
+                    <div className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
+      )}
+
+      {/* Premium Checkout Modal */}
+      {showCheckout && (
+        <PremiumCheckout
+          skinId={showCheckout}
+          onClose={handleCheckoutClose}
+        />
       )}
     </div>
   );

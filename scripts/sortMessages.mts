@@ -6,7 +6,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const messagesBaseDir = join(__dirname, '..', 'messages');
 
-// Define supported languages
 type SupportedLanguage = 'en' | 'de' | 'ru' | 'ka' | 'ar';
 
 function stripEmojis(str: string): string {
@@ -14,30 +13,22 @@ function stripEmojis(str: string): string {
 }
 
 function sortCharacterMessages(messagesObj: Record<string, string>, lang: SupportedLanguage): Record<string, string> {
-  // Convert object to array of [key, value] pairs, sort by value, then convert back
   const entries = Object.entries(messagesObj);
   const sortedEntries = entries.sort(([, a], [, b]) => a.localeCompare(b, lang));
-  
-  // Rebuild object with sorted values but preserve original numeric keys
   const result: Record<string, string> = {};
   sortedEntries.forEach(([, value], index) => {
     result[index.toString()] = value;
   });
-  
   return result;
 }
 
 function sortUIMessages(messagesObj: Record<string, unknown>): Record<string, unknown> {
-  // For UI messages, sort by key (semantic names) to maintain consistent order
   const entries = Object.entries(messagesObj);
   const sortedEntries = entries.sort(([a], [b]) => a.localeCompare(b));
-  
-  // Rebuild object maintaining original semantic keys
   const result: Record<string, unknown> = {};
   sortedEntries.forEach(([key, value]) => {
     result[key] = value;
   });
-  
   return result;
 }
 
@@ -61,7 +52,6 @@ function sortMessages() {
     const warnings: string[] = [];
     const CHARACTER_LIMIT = 41;
     
-    // Process both character and ui message directories
     const messageTypes = ['character', 'ui'];
     
     messageTypes.forEach(messageType => {
@@ -72,32 +62,25 @@ function sortMessages() {
         return;
       }
       
-      // Get all JSON files in the messages directory
       const files = readdirSync(messagesDir).filter(file => file.endsWith('.json'));
 
       files.forEach(file => {
         const lang = file.replace('.json', '') as SupportedLanguage;
         const filePath = join(messagesDir, file);
         
-        // Read and parse JSON
         const messagesData = JSON.parse(readFileSync(filePath, 'utf8'));
         
-        // Handle both object format (character messages) and direct object format (ui messages)
         let messages: string[];
         let isObjectFormat = false;
         let needsConversion = false;
         
         if (Array.isArray(messagesData)) {
-          // Array format - needs conversion to object format for character messages
           messages = messagesData;
           needsConversion = messageType === 'character';
         } else if (typeof messagesData === 'object') {
-          // Object format with numeric keys or direct key-value pairs
           if (messageType === 'ui') {
-            // For UI messages, extract all string values from nested objects
             messages = extractStringsFromObject(messagesData);
           } else {
-            // For character messages, simple object values
             messages = Object.values(messagesData);
           }
           isObjectFormat = true;
@@ -106,11 +89,9 @@ function sortMessages() {
           return;
         }
 
-        // Check message lengths and duplicates
         const strippedToOriginal = new Map<string, string[]>();
         
         messages.forEach((msg: string) => {
-          // Length check - only apply to character messages, not UI messages
           if (messageType === 'character' && msg.length > CHARACTER_LIMIT) {
             warnings.push(
               `Warning: ${messageType}/${lang} message exceeds ${CHARACTER_LIMIT} characters ` +
@@ -118,14 +99,12 @@ function sortMessages() {
             );
           }
 
-          // Duplicate check
           const stripped = stripEmojis(msg);
           const existing = strippedToOriginal.get(stripped) || [];
           existing.push(msg);
           strippedToOriginal.set(stripped, existing);
         });
 
-        // Add duplicate warnings
         strippedToOriginal.forEach((originals) => {
           if (originals.length > 1) {
             warnings.push(
@@ -135,9 +114,7 @@ function sortMessages() {
           }
         });
 
-        // Sort messages and write back
         if (needsConversion) {
-          // Convert array to object format for character messages
           const sortedMessages = [...messages].sort((a, b) => a.localeCompare(b, lang));
           const objectMessages: Record<string, string> = {};
           sortedMessages.forEach((message, index) => {
@@ -153,21 +130,17 @@ function sortMessages() {
           let sortedMessages;
           
           if (messageType === 'character') {
-            // Character messages: sort by value and use numeric keys
             sortedMessages = sortCharacterMessages(messagesData, lang);
           } else {
-            // UI messages: sort by key and preserve semantic keys
             sortedMessages = sortUIMessages(messagesData);
           }
           
-          // Write back to JSON file with pretty printing
           writeFileSync(
             filePath,
             JSON.stringify(sortedMessages, null, 2),
             'utf8'
           );
         } else {
-          // Handle array format (legacy) - shouldn't happen anymore
           const sortedMessages = [...messages].sort((a, b) => a.localeCompare(b, lang));
           
           writeFileSync(
@@ -181,7 +154,6 @@ function sortMessages() {
       });
     });
     
-    // Display warnings if any were collected
     if (warnings.length > 0) {
       console.warn('\nWarnings:');
       warnings.forEach(warning => console.warn(warning));
@@ -192,3 +164,4 @@ function sortMessages() {
 }
 
 sortMessages();
+
