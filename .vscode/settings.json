@@ -1,0 +1,8 @@
+{
+    "snyk.advanced.organization": "512ef4a1-6034-4537-a391-9692d282122a",
+    "snyk.advanced.autoSelectOrganization": true,
+    "i18n-ally.localesPaths": [
+        "i18n",
+        "messages"
+    ]
+}
