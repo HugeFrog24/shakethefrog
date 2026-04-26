@@ -3,6 +3,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      platforms:
+        - linux/amd64
+        - linux/arm64
     image: bogerserge/shakethefrog:latest
     ports:
       # HOST_PORT:CONTAINER_PORT - Maps port 3000 on the host to port 3000 in the container
@@ -16,9 +19,14 @@ services:
       start_period: 20s
     environment:
       - NODE_ENV=production
+      - FEATURE_PAYMENTS=${FEATURE_PAYMENTS:-1}
+      - LEMONSQUEEZY_API_KEY=${LEMONSQUEEZY_API_KEY}
+      - LEMONSQUEEZY_STORE_ID=${LEMONSQUEEZY_STORE_ID}
+      - LEMONSQUEEZY_WEBHOOK_SECRET=${LEMONSQUEEZY_WEBHOOK_SECRET}
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
     deploy:
       resources:
         limits:
-          memory: 1G
+          memory: 256M
         reservations:
-          memory: 512M
+          memory: 128M

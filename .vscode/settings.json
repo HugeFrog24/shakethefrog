@@ -1,0 +1,7 @@
+{
+    "snyk.advanced.autoSelectOrganization": true,
+    "i18n-ally.localesPaths": [
+        "i18n",
+        "messages"
+    ]
+}

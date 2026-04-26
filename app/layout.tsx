@@ -1,16 +1,40 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { ThemeProvider } from './providers/ThemeProvider'
-import { ThemeToggle } from './components/ThemeToggle'
+import { FeatureProvider } from './providers/FeatureProvider'
+import { getFeatureFlags } from './config/features'
+import { appConfig } from './config/app'
+import { Suspense } from 'react'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Shake the Frog',
-  description: 'A fun interactive frog that reacts to shaking!',
+  metadataBase: new URL(appConfig.url),
+  title: appConfig.name,
+  description: appConfig.description,
   icons: {
-    icon: '/images/frog.svg'
+    icon: appConfig.assets.favicon
+  },
+  openGraph: {
+    title: appConfig.name,
+    description: appConfig.description,
+    url: appConfig.url,
+    siteName: appConfig.name,
+    images: [{
+      url: '/api/og',
+      width: appConfig.assets.ogImage.width,
+      height: appConfig.assets.ogImage.height,
+      alt: `${appConfig.name} preview`
+    }],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: appConfig.name,
+    description: appConfig.description,
+    images: ['/api/og']
   }
 }
 
@@ -19,13 +43,22 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const features = getFeatureFlags();
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html suppressHydrationWarning>
       <body className={`${inter.className} transition-colors`}>
-        <ThemeProvider>
-          <ThemeToggle />
-          {children}
-        </ThemeProvider>
+        <FeatureProvider features={features}>
+          <ThemeProvider>
+            <Suspense fallback={
+              <div className="flex h-[100dvh] items-center justify-center bg-green-50 dark:bg-slate-900">
+                <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+              </div>
+            }>
+              {children}
+            </Suspense>
+          </ThemeProvider>
+        </FeatureProvider>
       </body>
     </html>
   )
