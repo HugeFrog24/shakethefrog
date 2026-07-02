@@ -1,9 +1,10 @@
-onlyBuiltDependencies:
-  - "@parcel/watcher"
-  - "@swc/core"
-  - esbuild
-  - sharp
-  - unrs-resolver
+# pnpm 11 replaced onlyBuiltDependencies with allowBuilds
+allowBuilds:
+  "@parcel/watcher": true
+  "@swc/core": true
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
 
 overrides:
   "picomatch@>=4": 4.0.4
