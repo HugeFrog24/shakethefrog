@@ -34,9 +34,9 @@ export default function Home() {
   const bumpAudio = useShakeAudio();
 
   const requestMotionPermission = async () => {
-    if (typeof window === 'undefined') return;
+    if (globalThis.window === undefined) return;
 
-    if (!('DeviceMotionEvent' in window)) {
+    if (!('DeviceMotionEvent' in globalThis)) {
       setMotionPermission('denied');
       return;
     }
@@ -57,7 +57,15 @@ export default function Home() {
 
   const triggerShake = useCallback((intensity: number) => {
     bumpAudio();
-    if (!isAnimatingRef.current) {
+    if (isAnimatingRef.current) {
+      const timeSinceStart = Date.now() - animationStartTimeRef.current;
+      if (timeSinceStart > 100) {
+        setShakeQueue(prev => {
+          if (prev.length >= 1) return prev;
+          return [...prev, intensity];
+        });
+      }
+    } else {
       if (animationTimeoutRef.current) {
         clearTimeout(animationTimeoutRef.current);
       }
@@ -86,14 +94,6 @@ export default function Home() {
           return prev;
         });
       }, shakeConfig.animations.shakeReset);
-    } else {
-      const timeSinceStart = Date.now() - animationStartTimeRef.current;
-      if (timeSinceStart > 100) {
-        setShakeQueue(prev => {
-          if (prev.length >= 1) return prev;
-          return [...prev, intensity];
-        });
-      }
     }
   }, [bumpAudio]);
 
@@ -108,7 +108,7 @@ export default function Home() {
       const acceleration = event.accelerationIncludingGravity;
       if (!acceleration) return;
 
-      const currentTime = new Date().getTime();
+      const currentTime = Date.now();
       const timeDiff = currentTime - lastUpdate;
 
       if (timeDiff > shakeConfig.debounceTime) {
@@ -124,19 +124,19 @@ export default function Home() {
       }
     };
 
-    if (typeof window !== 'undefined') {
-      if (motionPermission === 'granted' && 'DeviceMotionEvent' in window) {
-        window.addEventListener('devicemotion', handleMotion);
+    if (globalThis.window !== undefined) {
+      if (motionPermission === 'granted' && 'DeviceMotionEvent' in globalThis) {
+        globalThis.addEventListener('devicemotion', handleMotion);
       }
-      window.addEventListener('keydown', handleKeyPress);
+      globalThis.addEventListener('keydown', handleKeyPress);
     }
 
     return () => {
-      if (typeof window !== 'undefined') {
+      if (globalThis.window !== undefined) {
         if (motionPermission === 'granted') {
-          window.removeEventListener('devicemotion', handleMotion);
+          globalThis.removeEventListener('devicemotion', handleMotion);
         }
-        window.removeEventListener('keydown', handleKeyPress);
+        globalThis.removeEventListener('keydown', handleKeyPress);
       }
     };
   }, [lastUpdate, motionPermission, triggerShake]);

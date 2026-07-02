@@ -13,27 +13,27 @@
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "@lemonsqueezy/lemonsqueezy.js": "^4.0.0",
-    "next": "^16.2.4",
-    "next-intl": "^4.9.1",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5"
+    "next": "^16.2.10",
+    "next-intl": "^4.13.1",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
-    "@eslint/js": "^9.39.4",
-    "@tailwindcss/postcss": "^4.2.4",
-    "@types/node": "^25.6.0",
-    "@types/react": "^19.2.14",
+    "@eslint/js": "^10.0.1",
+    "@tailwindcss/postcss": "^4.3.2",
+    "@types/node": "^26.1.0",
+    "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "@typescript-eslint/eslint-plugin": "^8.59.0",
-    "@typescript-eslint/parser": "^8.59.0",
-    "eslint": "^9.39.4",
-    "eslint-config-next": "16.2.4",
-    "globals": "^17.5.0",
-    "postcss": "^8.5.10",
+    "@typescript-eslint/eslint-plugin": "^8.62.1",
+    "@typescript-eslint/parser": "^8.62.1",
+    "eslint": "^10.6.0",
+    "eslint-config-next": "16.2.10",
+    "globals": "^17.7.0",
+    "postcss": "^8.5.16",
     "postcss-load-config": "^6.0.1",
-    "tailwindcss": "^4.2.4",
-    "tsx": "^4.21.0",
+    "tailwindcss": "^4.3.2",
+    "tsx": "^4.22.5",
     "typescript": "6.0.3"
   }
 }
