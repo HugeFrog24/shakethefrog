@@ -1,0 +1,4 @@
+overrides:
+  "picomatch@>=4": 4.0.4
+  baseline-browser-mapping: 2.10.40
+  electron-to-chromium: 1.5.383
