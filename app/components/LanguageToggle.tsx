@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
 import { Link } from '../../i18n/routing';
 import { GlobeAltIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 
@@ -15,8 +16,11 @@ interface LanguageOption {
 export function LanguageToggle() {
   const locale = useLocale() as Locale;
   const t = useTranslations('ui');
+  const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const query = Object.fromEntries(searchParams);
 
   const locales: Locale[] = ['en', 'de', 'ru', 'ka', 'ar'];
 
@@ -89,7 +93,7 @@ export function LanguageToggle() {
             {languageOptions.map((option) => (
               <Link
                 key={option.code}
-                href="/"
+                href={{ pathname: '/', query }}
                 locale={option.code}
                 onClick={() => setIsOpen(false)}
                 className={`w-full flex items-center gap-3 px-3 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${

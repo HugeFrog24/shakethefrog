@@ -1,0 +1,17 @@
+# pnpm 11 replaced onlyBuiltDependencies with allowBuilds
+allowBuilds:
+  "@parcel/watcher": true
+  "@swc/core": true
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
+
+overrides:
+  "picomatch@>=4": 4.0.7
+  baseline-browser-mapping: 2.11.25
+  electron-to-chromium: 1.5.434
+  # security: GHSA DoS fixes in transitive deps (eslint/minimatch, next/postcss, babel)
+  "brace-expansion@<2": ^1.1.18
+  "brace-expansion@>=4 <6": ^5.0.9
+  "nanoid@<4": ^3.3.18
+  "browserslist@<5": ^4.28.7

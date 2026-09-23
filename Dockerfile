@@ -1,24 +1,23 @@
 # Build stage
-FROM --platform=$BUILDPLATFORM node:25-slim AS builder
+FROM --platform=$BUILDPLATFORM node:26-slim AS builder
 WORKDIR /app
 
 # Install pnpm
-RUN npm install -g pnpm
+RUN npm install -g pnpm@12
 
-COPY package.json pnpm-lock.yaml* ./
+COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml* ./
 RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm run build
 
 # Production stage
-FROM node:25-slim AS runner
+FROM node:26-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 
 # Create non-root user
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
 # Copy necessary files from builder
 COPY --from=builder /app/public ./public
